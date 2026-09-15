@@ -303,6 +303,124 @@
 
         </div>
 
+        <!-- ============================================================= -->
+        <!-- COTIZADOR INTERACTIVO: ARMA TU PEDIDO (VANILLA JAVASCRIPT)    -->
+        <!-- ============================================================= -->
+        <div class="pedido-builder" id="arma-tu-pedido">
+          <div class="builder-header">
+            <span class="section-badge">Calculadora Online</span>
+            <h3 class="builder-title">🍗 Arma tu Pedido en Vivo</h3>
+            <p class="builder-subtitle">Selecciona tus platos favoritos, calcula tus descuentos automáticos y genera tu orden para WhatsApp.</p>
+          </div>
+
+          <!-- Formulario de datos del cliente (Módulo 1) -->
+          <div class="builder-form-grid">
+            <div class="form-group">
+              <label for="cliente-nombre">Nombre del Cliente *</label>
+              <input type="text" id="cliente-nombre" placeholder="Ej. Juan Pérez" class="form-input">
+            </div>
+
+            <div class="form-group">
+              <label for="cliente-telefono">Teléfono / WhatsApp *</label>
+              <input type="text" id="cliente-telefono" placeholder="Ej. 987654321" class="form-input">
+            </div>
+
+            <div class="form-group">
+              <label for="cliente-cupon">Cupón de Descuento</label>
+              <input type="text" id="cliente-cupon" placeholder="Ej. POLLON10" class="form-input">
+            </div>
+          </div>
+
+          <!-- Selector de platos y botón agregar (Módulo 2 y 3) -->
+          <div class="builder-add-grid">
+            <div class="form-group flex-2">
+              <label for="select-plato">Selecciona un Plato</label>
+              <select id="select-plato" class="form-input form-select">
+                <option value="1">1 Pollo a la Brasa Entero - S/ 68.00</option>
+                <option value="2">1/2 Pollo a la Brasa - S/ 36.00</option>
+                <option value="3">1/4 Pollo a la Brasa - S/ 20.00</option>
+                <option value="4">Mostrito Pollón - S/ 24.00</option>
+                <option value="5">Pollo Broaster Crujiente - S/ 22.00</option>
+                <option value="6">Parrilla Mixta El Pollón - S/ 52.00</option>
+                <option value="7">Papas Fritas Extra - S/ 12.00</option>
+                <option value="8">Chicha Morada Artesanal (1L) - S/ 14.00</option>
+                <option value="9">Gaseosa 1.5L - S/ 10.00</option>
+              </select>
+            </div>
+
+            <div class="form-group flex-1">
+              <label for="input-cantidad">Cantidad</label>
+              <input type="number" id="input-cantidad" value="1" min="1" max="50" class="form-input">
+            </div>
+
+            <div class="form-group form-action">
+              <button type="button" id="btn-agregar-plato" class="btn btn-primary btn-block">
+                ➕ Agregar Plato
+              </button>
+            </div>
+          </div>
+
+          <!-- Mensajes de feedback dinámicos -->
+          <div id="mensaje-feedback" class="mensaje-feedback"></div>
+
+          <!-- Tabla dinámica del pedido (Módulo 3) -->
+          <div class="table-responsive">
+            <table class="tabla-pedido">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Plato</th>
+                  <th>Cant.</th>
+                  <th>P. Unit.</th>
+                  <th>Subtotal</th>
+                  <th>Quitar</th>
+                </tr>
+              </thead>
+              <tbody id="tabla-pedido-body">
+                <tr>
+                  <td colspan="6" class="text-center empty-msg">Aún no has agregado platos a tu pedido.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Totales y estadísticas del pedido (Módulo 2 y 4) -->
+          <div class="builder-summary-grid">
+            
+            <!-- Estadísticas (Módulo 4) -->
+            <div class="summary-stats-box">
+              <h4 class="stats-title">📊 Estadísticas del Pedido</h4>
+              <p class="stats-item">Total de unidades pedidas: <strong id="stat-total-items" class="stats-val">0</strong></p>
+              <p class="stats-item">Plato de mayor valor: <strong id="stat-plato-caro" class="stats-val">Ninguno</strong></p>
+              <p class="stats-item">Datos del cliente: <strong id="stat-cliente-info" class="stats-val">Por ingresar</strong></p>
+            </div>
+
+            <!-- Desglose de totales y botón WhatsApp -->
+            <div class="summary-totals-box">
+              <div class="total-row">
+                <span>Subtotal:</span>
+                <span id="resumen-subtotal">S/ 0.00</span>
+              </div>
+              <div class="total-row discount">
+                <span>Descuento aplicado:</span>
+                <span id="resumen-descuento">- S/ 0.00</span>
+              </div>
+              <div class="total-row total-final">
+                <span>Total a Pagar:</span>
+                <span id="resumen-total">S/ 0.00</span>
+              </div>
+              
+              <button type="button" id="btn-enviar-whatsapp" class="btn btn-gold btn-block btn-lg mt-3">
+                <svg class="icon-inline" viewBox="0 0 24 24" fill="currentColor" width="20" height="20" aria-hidden="true">
+                  <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.669-.699c.968.54 1.761.815 2.791.815 3.18 0 5.767-2.587 5.768-5.766.001-3.181-2.585-5.769-5.768-5.801zm3.377 8.21c-.149.417-.754.764-1.042.813-.284.048-.654.076-2.148-.544-1.911-.792-3.136-2.735-3.231-2.862-.095-.128-.773-1.03-.773-1.966 0-.936.488-1.396.662-1.587.174-.191.381-.239.508-.239.127 0 .254.001.365.006.118.005.276-.045.431.328.16.386.544 1.332.592 1.431.048.099.08.215.016.343-.064.128-.096.208-.191.32-.095.112-.2.25-.286.336-.095.096-.194.2-.083.391.111.191.493.813 1.057 1.316.727.648 1.34.849 1.531.944.191.096.302.08.413-.048.111-.128.477-.557.604-.748.127-.191.254-.16.429-.096.175.064 1.112.524 1.303.62.191.096.318.143.365.223.048.079.048.461-.101.878zM12 2C6.477 2 2 6.477 2 12c0 1.891.524 3.662 1.435 5.178L2.05 22l4.982-1.307C8.483 21.498 10.19 22 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2z"/>
+                </svg>
+                Enviar Pedido por WhatsApp
+              </button>
+            </div>
+          </div>
+
+        </div>
+
       </div>
     </section>
 
